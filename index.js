@@ -10,22 +10,27 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const config = require("./config.json");
 const utils = require("./utils.js");
-//const Canvas = require('canvas');
+require('discord-reply'); 
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('guildMemberAdd', member => {
-  const channel = member.guild.channels.cache.find(ch => ch.name === 'general');
-  if (!channel) return;
-  channel.send(`Welcome pizzero, ${member}`);
-});
+//client.on('guildMemberAdd', member => {
+//  const channel = member.guild.channels.cache.find(ch => ch.name === 'general');
+//  if (!channel) return;
+//  channel.send(`Welcome pizzero, ${member}`);
+//});
 
 client.on('message', async message => {
   try{
     if (message.author.bot) return;
     if (message.content.indexOf(config.prefix) !== 0) return;
+    if (message.author.id !== '363533283214098453' && message.channel && message.channel.id !== '853383729937121310') {
+      const botChannel = client.channels.cache.get('853383729937121310').toString();
+      message.channel.send('Please use the bot commands in ' + botChannel);
+      return;
+    }
     
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
@@ -85,26 +90,42 @@ client.on('message', async message => {
         }        
         break;
       case 'foo':
-        //const canvas = Canvas.createCanvas(700, 250);
-        //const ctx = canvas.getContext('2d');
-        //const background = await Canvas.loadImage('enhance.png');
-        //ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-        //ctx.strokeStyle = '#74037b';
-        //ctx.strokeRect(0, 0, canvas.width, canvas.height);
-        //ctx.font = '60px sans-serif';
-        //ctx.fillStyle = '#ffffff';
-        //ctx.fillText('+20', canvas.width / 2.5, canvas.height / 1.8);
+        //const generalChannel = client.channels.cache.get('784606534147506199');
+        const msg = args.join(' ');
 
-        //const successAttachment = new Discord.MessageAttachment(canvas.toBuffer(), 'enhance-success.png');
+        const botChannel = client.channels.cache.get('853383729937121310');
+        botChannel.send(msg);        
+        message.channel.send(msg);
+        //emoji(client,'eyes')
 
-        //message.channel.send(`Success, ${best}!`, successAttachment);
-
-        const guild = client.guilds.cache.get("784606534147506196");
+        /*const guild = client.guilds.cache.get("784606534147506196");
         guild.members.fetch()
           .then(members => 
             members.forEach(member => !member.user.bot && console.log(member.user.username))
-          )
+          )*/
         break;
+      case 'foo2':
+        const msg2 = args.join(' ');
+        //client.channel.messages.fetch('900066657374974004')
+        message.channel.messages.fetch('903049902618185758')
+          .then(oldMsg => oldMsg.lineReply(msg2))
+          .catch(console.error);
+
+        /*const guild = client.guilds.cache.get("784606534147506196");
+        guild.members.fetch()
+          .then(members => 
+            members.forEach(member => {
+              if (member.user.bot){
+                let hasRole = member.roles.cache.some(role => role.name === 'PizzaBot');
+                console.log(member.user.username);
+                console.log(hasRole);
+              }
+            })
+          )*/
+        
+        
+        break;
+
       case 'build':
         const buildEmbed = new Discord.MessageEmbed()
             .setTitle('Delia')
@@ -132,7 +153,6 @@ client.on('message', async message => {
           embed: buildEmbed,
           files: [{attachment: 'delia.png', name: 'delia.png'}]
         });
-        //message.channel.send({embed: buildEmbed,files: [{attachment: 'delia.png', name: 'delia.png'}]});
         break;
       case 'help':
       default:
